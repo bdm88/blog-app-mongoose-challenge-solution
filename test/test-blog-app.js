@@ -60,11 +60,11 @@ describe('Blog posts API resource', function(){
                 .then(function(_res){
                     res = _res
                     expect(res).to.have.status(200);
-                    expect(res.bosy.posts).to.have.lengthOf.at.least(1);
+                    expect(res.body).to.have.lengthOf.at.least(1);
                     return BlogPost.count();
                 })
                 .then(function(count){
-                    expect(res.body.posts).to.have.lengthOf(count);
+                    expect(res.body).to.have.lengthOf(count);
                 });
         });
 
@@ -75,22 +75,23 @@ describe('Blog posts API resource', function(){
                 .then(function(res){
                     expect(res).to.have.status(200);
                     expect(res).to.be.json;
-                    expect(res.body.posts).to.be.a('array');
-                    expect(res.body.posts).to.have.lengthOf.at.least(1);
+                    expect(res.body).to.be.a('array');
+                    expect(res.body).to.have.lengthOf.at.least(1);
 
-                    res.body.posts.forEach(function(post){
+                    res.body.forEach(function(post){
                         expect(post).to.be.a('Object');
                         expect(post).to.include.keys(
                             'id', 'title', 'content', 'author', 'created'
                         );
                     });
-                    resPost = res.body.posts[0];
+                    resPost = res.body[0];
                     return BlogPost.findById(resPost.id);
                 })
                 .then(function(post){
+                    console.log(post.author);
                     expect(resPost.id).to.equal(post.id);
                     expect(resPost.content).to.equal(post.content);
-                    expect(resPost.author).to.equal(post.author);
+                    expect(resPost.author).to.equal(`${post.author.firstName} ${post.author.lastName}`);
                 });
         });
     });
@@ -157,7 +158,7 @@ describe('Blog posts API resource', function(){
                     expect(post.title).to.equal(updateData.title);
                     expect(post.content).to.equal(updateData.content);
                     expect(post.author.firstName).to.equal(updateData.author.firstName);
-                    expect(post.author,lastName).to.equal(updateData.author.lastName);
+                    expect(post.author.lastName).to.equal(updateData.author.lastName);
                 });
         });
     });
